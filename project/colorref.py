@@ -12,23 +12,73 @@ def basic_colorref(path):
             G, properties = load_graph(f, Graph, read_list=True)
 
         graph_dict = {}
-
+        colors_graphs = {}
+        graph_iteration = {}
         for index, file_graph in enumerate(G):
             print_graph(file_graph, f"{index}_BEFORE")
-            colorref(file_graph)
+            iteration = colorref(file_graph)
             graph_dict[index] = file_graph
+            graph_iteration[index] = iteration
             print_graph(file_graph, f"{index}_AFTER")
 
+        separate_groups = {}
+        for graph_index, value in graph_dict.items():
+            colors = tuple(get_all_colors(graph_dict.get(graph_index)))
+            print(f"{graph_index} + \t {colors}")
+            same_links = False
+            if colors in colors_graphs.keys():
+                graphs = colors_graphs[colors]
+                for gr_index in graphs:
+                    print(f"Comparing {graph_index} and {gr_index}")
+                    if are_perfectly_edged(graph_dict[gr_index].edges, graph_dict[graph_index].edges):
+                        same_links = True
+                if same_links:
+                    colors_graphs[colors].append(graph_index)
+                else:
+                    separate_groups[len(separate_groups)] = graph_index
+            else:
+                colors_graphs[colors] = [graph_index]
 
-        # if not os.path.exists("graphs"):
-        #     os.makedirs("graphs")
-        #
-        # # Somehow import graph
-        # for file_graph in G:
-        #     time = f"uniqueId + {datetime.datetime.now().strftime('%Y%m%d%H%M')}"
-        #     print_graph(file_graph, f"{time}_BEFORE")
-        #     colorref(file_graph)
-        #     print_graph(file_graph, os.path.join("graphs", f"{time}_AFTER"))
+            print(f"{graph_index} + \t {same_links}")
+
+        print(colors_graphs)
+        res = []
+        for colors, group in colors_graphs.items():
+            discrete = len(colors) == len(set(group))
+            iteration = graph_iteration[group[0]]
+            res.append((group, iteration, discrete))
+
+        # check and add the separate graph groups
+        if len(separate_groups.keys()) == 1:
+            g_index = separate_groups[separate_groups.keys()[0]]
+            discrete = len(get_all_colors(graph_dict[g_index])) == len(set(get_all_colors(graph_dict[g_index])))
+            res.append(([g_index], graph_iteration[g_index], discrete))
+        elif len(separate_groups.keys()) > 1:
+            for g1 in separate_groups.values():
+                temporary_group = []
+                for g2 in separate_groups.values():
+                    if (g1 != g2) and are_perfectly_edged(graph_dict[g1].edges, graph_dict[g2].edges):
+                        temporary_group.append(g1)
+                        temporary_group.append(g2)
+                if len(temporary_group) > 0:
+                    vertexes = get_all_colors(graph_dict[g1])
+                    discrete = len(vertexes) == len(set(vertexes))
+                    temporary_group = sorted(temporary_group)
+                    tuple_group_res = (temporary_group, graph_iteration[temporary_group[0]], discrete)
+                    if tuple_group_res not in res:
+                        res.append(tuple_group_res)
+
+        # Printing the results
+        print("Sets of possibly isomorphic graphs:")
+        for tuple_res in res:
+            if tuple_res[2]:
+                print(f"{tuple_res[0]} {tuple_res[1]} discrete")
+            else:
+                print(f"{tuple_res[0]}  {tuple_res[1]}")
+
+        # for index, graph_instance in graph_dict.items():
+        #     print(f"{index}: {sorted(graph_dict[index].edges, key=lambda edge: (edge.head.label, edge.tail.label))}")
+        # Assembling and printing out the results
 
     except FileNotFoundError:
         exit("File not found.")
@@ -47,7 +97,8 @@ def colorref(graph_inst: Graph):
     graph_vertexes = sorted(list(graph_inst.vertices), key=lambda v: v.label)
     color = {}
 
-    # Extra step to round all vertexes
+    # Extra step to round all vertexes not needed
+
     # initial_color = 1
     # for i in graph_vertexes:
     #     i.color = initial_color
@@ -62,9 +113,13 @@ def colorref(graph_inst: Graph):
         else:
             color[c].append(vertex)
         max_degree = max(max_degree, c)
+    color = {key: color[key] for key in sorted(color)}
 
+    #
     changes = True
+    iteration_counter = 0
     while not_unique(color, graph_vertexes) and changes:
+        iteration_counter += 1
         changes = False
         new_color_assignments = {}
         # Choosing Which Vertex coloring to adjust
@@ -79,22 +134,8 @@ def colorref(graph_inst: Graph):
                 max_degree = max(max_degree, max(list(new_color_assignments.keys())))
         for updated_color, group in new_color_assignments.items():
             color[updated_color] = group
-            # keys_to_adjust = list(division.keys())
-            #     # color[key] = division[keys_to_adjust[0]]
-            # for key_to_new_group in keys_to_adjust[1:]:
-            #     new_color = max(color.keys()) + 1
-            #     color[new_color] = division[key_to_new_group]
-            #     for vertex in division[key_to_new_group]:
-            #         vertex.label = new_color
-
-        # Adjusting the colors
-    print("Graph vertexes:", color)
-    # graphs = G[0]
-    # print(graphs)
-    # print(G[0][0])
-    #
-    # vert = graph_inst.vertices[0]
-    # vert.color = 'red'
+    print("Iteration Counter:", iteration_counter)
+    return iteration_counter
 
 
 # Divides the vertexes of the same color in a new color. Returns the dictionary of tuple and list of vertexes.
@@ -111,6 +152,14 @@ def color_by_parts(vertexes: list, max_degree: int) -> dict:
         else:
             # Ensure the value is initialized as a list containing the vertex
             comparison[neighbour_colors] = [vertex]
+    # Sorting based on the number of items changed
+    # comparison = dict(sorted(comparison.items(), key=lambda item: len(item[1])))
+
+    # Sorting based on the sum of neighbours
+    comparison = dict(sorted(comparison.items(), key=lambda item: sum(item[0])))
+
+    # Custom sorting
+    comparison = dict(sorted(comparison.items(), key=custom_sort))
     res = {vertexes[0].label: comparison[list(comparison.keys())[0]]}
     # If coloring does not change
     if len(comparison.keys()) == 1:
@@ -137,5 +186,50 @@ def print_graph(g: Graph, name: str):
         write_dot(g, file)
 
 
+def get_all_colors(g: Graph) -> list:
+    res = []
+    for vertex in g.vertices:
+        res.append(vertex.label)
+    return sorted(res)
+
+
+def are_perfectly_edged(edges: list, edges1: list):
+    if len(edges) != len(edges1):
+        return False
+    else:
+        dict_edges = edges_to_dict(edges)
+        dict_edges2 = edges_to_dict(edges1)
+        for key in dict_edges:
+            if key not in dict_edges2:
+                return False
+            if dict_edges[key] != dict_edges2[key]:
+                return False
+    return True
+
+
+def edges_to_dict(edges: list) -> dict:
+    dict_edges = {}
+    for edge in edges:
+        if edge.head.label < edge.tail.label:
+            edge_to_store = tuple([edge.head.label, edge.tail.label])
+        else:
+            edge_to_store = tuple([edge.tail.label, edge.head.label])
+
+        if edge_to_store not in dict_edges:
+            dict_edges[edge_to_store] = 1
+        else:
+            dict_edges[edge_to_store] = dict_edges[edge_to_store] + 1
+
+    return dict_edges
+
+
+def custom_sort(item):
+    # Primary key: Sum of the tuple
+    primary_key = sum(item[0])
+    # Secondary key: The sorted tuple itself (this naturally prioritizes smaller numbers)
+    secondary_key = sorted(item[0], reverse=True)  # Sort in reverse to prioritize smaller numbers at the end
+    return (primary_key, secondary_key)
+
+
 if __name__ == '__main__':
-    basic_colorref("SampleGraphsBasicColorRefinement/colorref_smallexample_4_7.grl")
+    basic_colorref("SampleGraphsBasicColorRefinement/colorref_largeexample_6_960.grl")

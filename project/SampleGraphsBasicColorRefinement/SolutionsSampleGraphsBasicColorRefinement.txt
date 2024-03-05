@@ -1,0 +1,100 @@
+colorref_largeexample_4_1026.grl
+
+Correct Result: ERROR IN FIRST NOT DISCRETE!!!
+
+Sets of possibly isomorphic graphs:
+[0, 1] 4 discrete
+[2, 3] 4 discrete
+
+
+
+[([0, 1], 4, True), ([2, 3], 4, True)]
+
+Correct Result: ERROR IN FIRST NOT DISCRETE!!!
+
+colorref_largeexample_6_960.grl
+Sets of possibly isomorphic graphs:
+[0, 4] 320 discrete
+[1, 3] 160
+[2, 5] 320 discrete
+
+[([0, 4], 320, True), ([1, 3], 160, False), ([2, 5], 320, True)]
+
+colorref_smallexample_2_49.grl
+Sets of possibly isomorphic graphs:
+[0, 1] 3 discrete
+
+[([0, 1], 3, True)]
+
+colorref_smallexample_4_16.grl
+Sets of possibly isomorphic graphs:
+[0, 1] 3
+[2, 3] 4 discrete
+
+[([0, 1], 3, False), ([2, 3], 4, True)]
+
+colorref_smallexample_4_7.grl
+Sets of possibly isomorphic graphs:
+[0, 2] 2
+[1, 3] 2 discrete
+
+[([0, 2], 2, False), ([1, 3], 2, True)]
+
+colorref_smallexample_6_15.grl
+Sets of possibly isomorphic graphs:
+[0, 1] 5 discrete
+[2, 3] 5 discrete
+[4, 5] 3
+
+[([0, 1], 5, True), ([2, 3], 5, True), ([4, 5], 3, False)]
+
+cref9vert3comp_10_27.grl
+Sets of possibly isomorphic graphs:
+[0, 3] 3
+[1, 8, 9] 3
+[2, 4, 7] 6
+[5, 6] 6
+
+[([0, 3], 3, False), ([1, 8, 9], 3, False), ([2, 4, 7], 6, False), ([5, 6], 6, False)]
+
+test_3reg.grl
+Sets of possibly isomorphic graphs:
+[0, 1, 2, 3] 1
+
+[([0, 1, 2, 3], 1, False)]
+
+test_cref9.grl
+Sets of possibly isomorphic graphs:
+[0, 2, 3] 3 discrete
+[1, 4] 3 discrete
+
+[([0, 2, 3], 3, True), ([1, 4], 3, True)]
+
+test_cycles.grl
+Sets of possibly isomorphic graphs:
+[0, 1, 2, 3, 4, 5, 6] 1
+
+[([0, 1, 2, 3, 4, 5, 6], 1, False)]
+
+test_empty.grl
+Sets of possibly isomorphic graphs:
+[0, 4, 5] 1
+[1] 1
+[2, 3] 1 discrete
+
+[([0, 4, 5], 1, False), ([1], 1, False), ([2, 3], 1, True)]
+
+test_iter.grl
+Sets of possibly isomorphic graphs:
+[0] 10
+[1] 10
+
+[([0], 10, False), ([1], 10, False)]
+
+test_trees.grl
+Sets of possibly isomorphic graphs:
+[0, 2] 3
+[1, 5] 3
+[3, 4] 3
+
+[([0, 2], 3, False), ([1, 5], 3, False), ([3, 4], 3, False)]
