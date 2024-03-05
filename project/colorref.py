@@ -52,10 +52,9 @@ def basic_colorref(path):
             res.append(([g_index], graph_iteration[g_index], discrete))
         elif len(separate_groups.keys()) > 1:
             for g1 in separate_groups.values():
-                temporary_group = []
+                temporary_group = [g1]
                 for g2 in separate_groups.values():
                     if (g1 != g2) and are_perfectly_edged(graph_dict[g1].edges, graph_dict[g2].edges):
-                        temporary_group.append(g1)
                         temporary_group.append(g2)
                 if len(temporary_group) > 0:
                     vertexes = get_all_colors(graph_dict[g1])
