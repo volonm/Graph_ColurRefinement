@@ -60,7 +60,7 @@ def basic_colorref(path):
                 if len(temporary_group) > 0:
                     vertexes = get_all_colors(graph_dict[g1])
                     discrete = len(vertexes) == len(set(vertexes))
-                    temporary_group = sorted(temporary_group)
+                    temporary_group = list(sorted(set(temporary_group)))
                     tuple_group_res = (temporary_group, graph_iteration[temporary_group[0]], discrete)
                     if tuple_group_res not in res:
                         res.append(tuple_group_res)
@@ -245,3 +245,6 @@ if __name__ == '__main__':
         print(file + "\n")
         basic_colorref(os.path.join("SampleGraphsBasicColorRefinement", file))
         print("\n\n")
+
+    # basic_colorref(os.path.join("SampleGraphsBasicColorRefinement", "cref9vert3comp_10_27.grl"))
+
