@@ -24,12 +24,12 @@ def basic_colorref(path):
         separate_groups = {}
         for graph_index, value in graph_dict.items():
             colors = tuple(get_all_colors(graph_dict.get(graph_index)))
-            print(f"{graph_index} + \t {colors}")
+            # print(f"{graph_index} + \t {colors}")
             same_links = False
             if colors in colors_graphs.keys():
                 graphs = colors_graphs[colors]
                 for gr_index in graphs:
-                    print(f"Comparing {graph_index} and {gr_index}")
+                    # print(f"Comparing {graph_index} and {gr_index}")
                     if are_perfectly_edged(graph_dict[gr_index].edges, graph_dict[graph_index].edges):
                         same_links = True
                 if same_links:
@@ -39,12 +39,9 @@ def basic_colorref(path):
             else:
                 colors_graphs[colors] = [graph_index]
 
-            print(f"{graph_index} + \t {same_links}")
-
-        print(colors_graphs)
         res = []
         for colors, group in colors_graphs.items():
-            discrete = len(colors) == len(set(group))
+            discrete = len(colors) == len(set(colors))
             iteration = graph_iteration[group[0]]
             res.append((group, iteration, discrete))
 
@@ -134,7 +131,6 @@ def colorref(graph_inst: Graph):
                 max_degree = max(max_degree, max(list(new_color_assignments.keys())))
         for updated_color, group in new_color_assignments.items():
             color[updated_color] = group
-    print("Iteration Counter:", iteration_counter)
     return iteration_counter
 
 
@@ -232,4 +228,20 @@ def custom_sort(item):
 
 
 if __name__ == '__main__':
-    basic_colorref("SampleGraphsBasicColorRefinement/colorref_largeexample_6_960.grl")
+    test_list = ["colorref_largeexample_4_1026.grl",
+                 "colorref_largeexample_6_960.grl",
+                 "colorref_smallexample_2_49.grl",
+                 "colorref_smallexample_4_16.grl",
+                 "colorref_smallexample_4_7.grl",
+                 "colorref_smallexample_6_15.grl",
+                 "cref9vert3comp_10_27.grl",
+                 "test_3reg.grl",
+                 "test_cref9.grl",
+                 "test_cycles.grl",
+                 "test_empty.grl",
+                 "test_iter.grl",
+                 "test_trees.grl"]
+    for file in test_list:
+        print(file + "\n")
+        basic_colorref(os.path.join("SampleGraphsBasicColorRefinement", file))
+        print("\n\n")

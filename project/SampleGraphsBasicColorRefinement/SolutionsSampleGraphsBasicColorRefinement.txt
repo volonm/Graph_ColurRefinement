@@ -1,6 +1,5 @@
 colorref_largeexample_4_1026.grl
 
-Correct Result: ERROR IN FIRST NOT DISCRETE!!!
 
 Sets of possibly isomorphic graphs:
 [0, 1] 4 discrete
@@ -10,7 +9,6 @@ Sets of possibly isomorphic graphs:
 
 [([0, 1], 4, True), ([2, 3], 4, True)]
 
-Correct Result: ERROR IN FIRST NOT DISCRETE!!!
 
 colorref_largeexample_6_960.grl
 Sets of possibly isomorphic graphs:
@@ -48,7 +46,9 @@ Sets of possibly isomorphic graphs:
 
 [([0, 1], 5, True), ([2, 3], 5, True), ([4, 5], 3, False)]
 
+ERROR TO FIX !!!
 cref9vert3comp_10_27.grl
+
 Sets of possibly isomorphic graphs:
 [0, 3] 3
 [1, 8, 9] 3
