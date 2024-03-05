@@ -1,7 +1,4 @@
-import datetime
 import os
-
-import graph
 from graph import Graph, Vertex
 from graph_io import load_graph, write_dot
 
@@ -71,10 +68,7 @@ def basic_colorref(path):
                 print(f"{tuple_res[0]} {tuple_res[1]} discrete")
             else:
                 print(f"{tuple_res[0]}  {tuple_res[1]}")
-
-        # for index, graph_instance in graph_dict.items():
-        #     print(f"{index}: {sorted(graph_dict[index].edges, key=lambda edge: (edge.head.label, edge.tail.label))}")
-        # Assembling and printing out the results
+        return res
 
     except FileNotFoundError:
         exit("File not found.")
@@ -87,6 +81,7 @@ def not_unique(color: dict, graph_vertexes: list) -> bool:
     return True
 
 
+# The color refinement algorithm itself, which shows a
 def colorref(graph_inst: Graph):
     # Initialisation stage
 
@@ -111,7 +106,7 @@ def colorref(graph_inst: Graph):
         max_degree = max(max_degree, c)
     color = {key: color[key] for key in sorted(color)}
 
-    #
+    # The color refinement.
     changes = True
     iteration_counter = 0
     while not_unique(color, graph_vertexes) and changes:
@@ -167,6 +162,7 @@ def color_by_parts(vertexes: list, max_degree: int) -> dict:
     return res
 
 
+# For a certain vertex returns a list of labels of the given vertex neighbours.
 def get_neighbour_colors(vertex: Vertex) -> list:
     res = []
     for neighbour in vertex.neighbours:
@@ -242,8 +238,8 @@ if __name__ == '__main__':
                  "test_trees.grl"]
     for file in test_list:
         print(file + "\n")
-        basic_colorref(os.path.join("SampleGraphsBasicColorRefinement", file))
+
+        print(basic_colorref(os.path.join("SampleGraphsBasicColorRefinement", file)))
         print("\n\n")
 
     # basic_colorref(os.path.join("SampleGraphsBasicColorRefinement", "cref9vert3comp_10_27.grl"))
-
