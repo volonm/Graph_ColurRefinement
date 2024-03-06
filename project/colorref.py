@@ -19,16 +19,19 @@ def basic_colorref(path):
             print_graph(file_graph, f"{index}_AFTER")
 
         separate_groups = {}
+        # For each graph in the given file
         for graph_index, value in graph_dict.items():
             colors = tuple(get_all_colors(graph_dict.get(graph_index)))
             # print(f"{graph_index} + \t {colors}")
             same_links = False
             if colors in colors_graphs.keys():
                 graphs = colors_graphs[colors]
-                for gr_index in graphs:
-                    # print(f"Comparing {graph_index} and {gr_index}")
-                    if are_perfectly_edged(graph_dict[gr_index].edges, graph_dict[graph_index].edges):
-                        same_links = True
+                if are_perfectly_edged(graph_dict[graphs[0]].edges, graph_dict[graph_index].edges):
+                    same_links = True
+                # for gr_index in graphs:
+                #     # print(f"Comparing {graph_index} and {gr_index}")
+                #     if are_perfectly_edged(graph_dict[gr_index].edges, graph_dict[graph_index].edges):
+                #         same_links = True
                 if same_links:
                     colors_graphs[colors].append(graph_index)
                 else:
@@ -81,14 +84,14 @@ def not_unique(color: dict, graph_vertexes: list) -> bool:
     return True
 
 
-# The color refinement algorithm itself, which shows a
+# The color refinement algorithm itself, for a single graph instance
 def colorref(graph_inst: Graph):
     # Initialisation stage
 
     graph_vertexes = sorted(list(graph_inst.vertices), key=lambda v: v.label)
     color = {}
 
-    # Extra step to round all vertexes not needed
+    # Extra step to round all vertexes (not needed)
 
     # initial_color = 1
     # for i in graph_vertexes:
@@ -109,22 +112,32 @@ def colorref(graph_inst: Graph):
     # The color refinement.
     changes = True
     iteration_counter = 0
-    while not_unique(color, graph_vertexes) and changes:
+    # new_color_assignments = 0
+    # while new_color_assignments != {}:
+    while changes:
         iteration_counter += 1
         changes = False
         new_color_assignments = {}
+
         # Choosing Which Vertex coloring to adjust
         for key, vertex_group in color.items():
             division = color_by_parts(vertex_group, max_degree)
             if len(division) > 1:
                 changes = True
                 new_color_assignments.update(division)
-                for new_color, group in division.items():
-                    for vertex in division.get(new_color):
-                        vertex.label = new_color
+                # To speed up the algorithm, but this is not allowed according to rules
+                # so keep it until project.
+                # This is updating vertexes during partition rounds (now moved to line 138)
+
+                # for new_color, group in division.items():
+                #     for vertex in division.get(new_color):
+                #         vertex.label = new_color
                 max_degree = max(max_degree, max(list(new_color_assignments.keys())))
         for updated_color, group in new_color_assignments.items():
+            for vertex in new_color_assignments[updated_color]:
+                vertex.label = updated_color
             color[updated_color] = group
+
     return iteration_counter
 
 
@@ -223,23 +236,38 @@ def custom_sort(item):
 
 
 if __name__ == '__main__':
-    test_list = ["colorref_largeexample_4_1026.grl",
-                 "colorref_largeexample_6_960.grl",
-                 "colorref_smallexample_2_49.grl",
-                 "colorref_smallexample_4_16.grl",
-                 "colorref_smallexample_4_7.grl",
-                 "colorref_smallexample_6_15.grl",
-                 "cref9vert3comp_10_27.grl",
-                 "test_3reg.grl",
-                 "test_cref9.grl",
-                 "test_cycles.grl",
-                 "test_empty.grl",
-                 "test_iter.grl",
-                 "test_trees.grl"]
+    test_list = [
+            "colorref_smallexample_6_15.grl",
+            "colorref_largeexample_4_1026.grl",
+            "colorref_largeexample_6_960.grl",
+            "colorref_smallexample_2_49.grl",
+            "colorref_smallexample_4_16.grl",
+            "colorref_smallexample_4_7.grl",
+            "cref9vert3comp_10_27.grl",
+            "test_3reg.grl",
+            "test_cref9.grl",
+            "test_cycles.grl",
+            "test_empty.grl",
+            "test_iter.grl",
+            "test_trees.grl"
+    ]
+
+    benchmark_list = ["CrefBenchmark1.grl",
+                      "CrefBenchmark2.grl",
+                      "CrefBenchmark3.grl",
+                      "CrefBenchmark4.grl",
+                      "CrefBenchmark5.grl",
+                      "CrefBenchmark6.grl", ]
+    # for file in benchmark_list:
+    #     print(file + "\n")
+    #
+    #     print(basic_colorref(os.path.join("Benchmark_instances", file)))
+    #     print("\n\n")
+
     for file in test_list:
         print(file + "\n")
 
         print(basic_colorref(os.path.join("SampleGraphsBasicColorRefinement", file)))
         print("\n\n")
 
-    # basic_colorref(os.path.join("SampleGraphsBasicColorRefinement", "cref9vert3comp_10_27.grl"))
+
